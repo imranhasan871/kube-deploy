@@ -1,62 +1,60 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:latest
-    container_name: kubedeploy-postgres
-    environment:
-      POSTGRES_USER: kubedeploy
-      POSTGRES_PASSWORD: kubedeploy123
-      POSTGRES_DB: kubedeploy
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - kube-deploy-net
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kubedeploy"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    postgres:
+        image: postgres:latest
+        container_name: kubedeploy-postgres
+        environment:
+            POSTGRES_USER: kubedeploy
+            POSTGRES_PASSWORD: kubedeploy123
+            POSTGRES_DB: kubedeploy
+        ports:
+            - '5432:5432'
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        networks:
+            - kube-deploy-net
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U kubedeploy']
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-  backend:
-    build:
-      context: .
-      dockerfile: docker/backend.Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      - PORT=8080
-      - DATABASE_URL=postgresql://kubedeploy:kubedeploy123@postgres:5432/kubedeploy?sslmode=disable
-      - GIN_MODE=release
-    volumes:
-      - ~/.kube/config:/root/.kube/config:ro
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - kube-deploy-net
-    restart: unless-stopped
+    backend:
+        build:
+            context: .
+            dockerfile: docker/backend.Dockerfile
+        ports:
+            - '8080:8080'
+        environment:
+            - PORT=8080
+            - DATABASE_URL=postgresql://kubedeploy:kubedeploy123@postgres:5432/kubedeploy?sslmode=disable
+            - GIN_MODE=release
+        volumes:
+            - ~/.kube/config:/root/.kube/config:ro
+        depends_on:
+            postgres:
+                condition: service_healthy
+        networks:
+            - kube-deploy-net
+        restart: unless-stopped
 
-  frontend:
-    build:
-      context: .
-      dockerfile: docker/frontend.Dockerfile
-    ports:
-      - "3000:80"
-    environment:
-      - VITE_API_URL=http://localhost:8080/api
-    depends_on:
-      - backend
-    networks:
-      - kube-deploy-net
-    restart: unless-stopped
+    frontend:
+        build:
+            context: .
+            dockerfile: docker/frontend.Dockerfile
+        ports:
+            - '3000:80'
+        environment:
+            - VITE_API_URL=http://localhost:8080/api
+        depends_on:
+            - backend
+        networks:
+            - kube-deploy-net
+        restart: unless-stopped
 
 volumes:
-  postgres_data:
-    driver: local
+    postgres_data:
+        driver: local
 
 networks:
-  kube-deploy-net:
-    driver: bridge
+    kube-deploy-net:
+        driver: bridge
