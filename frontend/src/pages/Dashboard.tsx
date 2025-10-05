@@ -37,8 +37,8 @@ export function Dashboard() {
 
   // Calculate deployment health
   const healthyDeployments = deployments.filter((d: any) => {
-    const ready = d.status?.readyReplicas || 0;
-    const desired = d.spec?.replicas || 0;
+    const ready = d.readyReplicas || 0;
+    const desired = d.replicas || 0;
     return ready === desired && desired > 0;
   }).length;
 
@@ -129,24 +129,24 @@ export function Dashboard() {
             ) : (
               <div className="space-y-3">
                 {deployments.slice(0, 5).map((deployment: any) => {
-                  const ready = deployment.status?.readyReplicas || 0;
-                  const desired = deployment.spec?.replicas || 0;
+                  const ready = deployment.readyReplicas || 0;
+                  const desired = deployment.replicas || 0;
                   const isHealthy = ready === desired && desired > 0;
 
                   return (
                     <div
-                      key={`${deployment.metadata.namespace}/${deployment.metadata.name}`}
+                      key={`${deployment.namespace}/${deployment.name}`}
                       className="flex items-center justify-between p-3 border border-slate-700/50 rounded-lg hover:border-purple-500/50 transition-all"
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <p className="font-medium text-white">{deployment.metadata.name}</p>
+                          <p className="font-medium text-white">{deployment.name}</p>
                           <Badge variant="outline" className="text-xs">
-                            {deployment.metadata.namespace}
+                            {deployment.namespace}
                           </Badge>
                         </div>
                         <p className="text-sm text-slate-400 mt-1">
-                          {deployment.spec?.template?.spec?.containers?.[0]?.image || 'N/A'}
+                          {deployment.image || 'N/A'}
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
@@ -231,16 +231,16 @@ export function Dashboard() {
           ) : (
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {services.slice(0, 6).map((service: any) => {
-                const serviceType = service.spec?.type || 'ClusterIP';
-                const ports = service.spec?.ports || [];
+                const serviceType = service.type || 'ClusterIP';
+                const ports = service.ports || [];
 
                 return (
                   <div
-                    key={`${service.metadata.namespace}/${service.metadata.name}`}
+                    key={`${service.namespace}/${service.name}`}
                     className="p-3 border border-slate-700/50 rounded-lg hover:border-purple-500/50 transition-all"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <p className="font-medium text-white">{service.metadata.name}</p>
+                      <p className="font-medium text-white">{service.name}</p>
                     </div>
                     <div className="flex items-center gap-2 mb-2">
                       <Badge className={
@@ -250,7 +250,7 @@ export function Dashboard() {
                         {serviceType}
                       </Badge>
                       <Badge variant="outline" className="text-xs">
-                        {service.metadata.namespace}
+                        {service.namespace}
                       </Badge>
                     </div>
                     {ports.length > 0 && (
