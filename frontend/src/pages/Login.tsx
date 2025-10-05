@@ -33,6 +33,12 @@ export function Login() {
     loginMutation.mutate({ email, password });
   };
 
+  const fillDemoUser = () => {
+    setEmail('demo@example.com');
+    setPassword('demo123');
+    setError('');
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-900 relative overflow-hidden">
       {/* Animated Gradient Background */}
@@ -101,6 +107,15 @@ export function Login() {
               autoComplete="current-password"
             />
           </div>
+
+          <Button
+            type="button"
+            onClick={fillDemoUser}
+            className="w-full bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 border border-slate-600/50 font-medium py-2"
+            variant="outline"
+          >
+            Try Demo User
+          </Button>
 
           <Button
             type="submit"

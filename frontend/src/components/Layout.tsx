@@ -1,8 +1,10 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Server, List, Sparkles, Rocket, Layers, Globe } from 'lucide-react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Server, List, Sparkles, Rocket, Layers, Globe, LogOut, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: Server },
@@ -13,6 +15,14 @@ export function Layout() {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -68,10 +78,20 @@ export function Layout() {
               })}
             </nav>
 
-            {/* Status Indicator */}
-            <div className="flex items-center gap-2 px-4 py-2 glass-effect rounded-full">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-sm text-slate-300">Live</span>
+            {/* User Menu */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-4 py-2 glass-effect rounded-full">
+                <User className="h-4 w-4 text-purple-400" />
+                <span className="text-sm text-slate-300">{user.username || user.email}</span>
+              </div>
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                className="border-slate-600/50 hover:border-red-500/50 hover:bg-red-500/10 text-slate-300 hover:text-red-400 transition-all"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
             </div>
           </div>
         </div>
