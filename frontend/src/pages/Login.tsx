@@ -20,7 +20,7 @@ export function Login() {
       const { token, user } = response.data.data;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
-      navigate('/');
+      navigate('/dashboard');
     },
     onError: (error: any) => {
       setError(error.response?.data?.error || 'Login failed');
@@ -41,6 +41,14 @@ export function Login() {
         <div className="absolute top-0 -right-4 w-96 h-96 bg-blue-500/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
         <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-500/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
       </div>
+
+      {/* Back to Home */}
+      <Link
+        to="/"
+        className="absolute top-8 left-8 text-slate-400 hover:text-purple-400 transition-colors z-20 flex items-center gap-2"
+      >
+        ← Back to Home
+      </Link>
 
       <Card className="w-full max-w-md p-8 glass-effect border-slate-700/50 relative z-10">
         {/* Logo */}

@@ -5,11 +5,11 @@ export function Layout() {
   const location = useLocation();
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: Server },
-    { path: '/advanced-deploy', label: 'Deploy', icon: Rocket },
-    { path: '/deployments', label: 'Deployments', icon: Layers },
-    { path: '/services', label: 'Services', icon: Globe },
-    { path: '/pods', label: 'Pods', icon: List },
+    { path: '/dashboard', label: 'Dashboard', icon: Server },
+    { path: '/dashboard/advanced-deploy', label: 'Deploy', icon: Rocket },
+    { path: '/dashboard/deployments', label: 'Deployments', icon: Layers },
+    { path: '/dashboard/services', label: 'Services', icon: Globe },
+    { path: '/dashboard/pods', label: 'Pods', icon: List },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -84,7 +84,7 @@ export function Layout() {
 
       {/* Floating Action Button */}
       <Link
-        to="/advanced-deploy"
+        to="/dashboard/advanced-deploy"
         className="fixed bottom-8 right-8 p-4 gradient-accent rounded-full shadow-2xl shadow-pink-500/50 glow-accent hover:scale-110 transition-all duration-300 group z-50"
       >
         <Sparkles className="h-6 w-6 text-white group-hover:rotate-180 transition-transform duration-500" />

@@ -200,7 +200,7 @@ export default function AdvancedDeploy() {
         await serviceMutation.mutateAsync(serviceData);
       }
 
-      navigate('/deployments');
+      navigate('/dashboard/deployments');
     } catch (error: any) {
       console.error('Deployment failed:', error);
       alert(error.response?.data?.error || 'Failed to create deployment');
@@ -577,7 +577,7 @@ export default function AdvancedDeploy() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/dashboard')}
             className="px-8"
           >
             Cancel
