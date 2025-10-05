@@ -204,18 +204,22 @@ export function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             {[
-              { name: 'React 19', desc: 'Modern UI', color: 'from-cyan-400 to-blue-500', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
-              { name: 'Go', desc: 'Fast Backend', color: 'from-cyan-400 to-blue-600', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg' },
-              { name: 'Kubernetes', desc: 'Orchestration', color: 'from-blue-500 to-indigo-600', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg' },
-              { name: 'PostgreSQL', desc: 'Database', color: 'from-blue-600 to-indigo-700', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg' },
-              { name: 'Docker', desc: 'Containers', color: 'from-blue-500 to-cyan-500', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
-              { name: 'TailwindCSS', desc: 'Styling', color: 'from-cyan-400 to-blue-500', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg' },
-              { name: 'TypeScript', desc: 'Type Safety', color: 'from-blue-600 to-indigo-600', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
-              { name: 'Gin', desc: 'Web Framework', color: 'from-cyan-500 to-blue-600', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg' }
+              { name: 'React 19', desc: 'Modern UI', color: 'from-cyan-400 to-blue-500', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg', useColor: true },
+              { name: 'Go', desc: 'Fast Backend', color: 'from-cyan-400 to-blue-600', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg', useColor: true },
+              { name: 'Kubernetes', desc: 'Orchestration', color: 'from-blue-500 to-indigo-600', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg', useColor: true },
+              { name: 'PostgreSQL', desc: 'Database', color: 'from-blue-600 to-indigo-700', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg', useColor: true },
+              { name: 'Docker', desc: 'Containers', color: 'from-blue-500 to-cyan-500', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg', useColor: true },
+              { name: 'TailwindCSS', desc: 'Styling', color: 'from-cyan-400 to-blue-500', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg', useColor: true },
+              { name: 'TypeScript', desc: 'Type Safety', color: 'from-blue-600 to-indigo-600', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg', useColor: true },
+              { name: 'Gin', desc: 'Web Framework', color: 'from-cyan-500 to-blue-600', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg', useColor: true }
             ].map((tech, index) => (
               <div key={index} className="text-center group cursor-pointer">
                 <div className={`p-4 rounded-xl glass-effect border border-slate-700/50 group-hover:border-purple-500/50 group-hover:scale-110 transition-all mb-2 bg-gradient-to-br ${tech.color} bg-opacity-10`}>
-                  <img src={tech.logo} alt={tech.name} className="h-12 w-12 mx-auto filter brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity" />
+                  <img
+                    src={tech.logo}
+                    alt={tech.name}
+                    className={`h-12 w-12 mx-auto ${tech.useColor ? '' : 'filter brightness-0 invert opacity-90'} group-hover:opacity-100 transition-opacity`}
+                  />
                 </div>
                 <div className="font-semibold text-white">{tech.name}</div>
                 <div className="text-sm text-slate-400">{tech.desc}</div>

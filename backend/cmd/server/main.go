@@ -44,6 +44,11 @@ func main() {
 	if err := database.Connect(); err != nil {
 		log.Printf("Warning: Database connection failed: %v", err)
 		log.Println("Authentication features will be disabled")
+	} else {
+		// Seed demo users for testing
+		if err := database.SeedDemoUsers(); err != nil {
+			log.Printf("Warning: Failed to seed demo users: %v", err)
+		}
 	}
 
 	// Initialize Kubernetes client

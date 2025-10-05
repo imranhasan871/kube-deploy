@@ -34,7 +34,7 @@ export function Login() {
   };
 
   const fillDemoUser = () => {
-    setEmail('demo@example.com');
+    setEmail('demo@kubedeploy.io');
     setPassword('demo123');
     setError('');
   };
@@ -108,13 +108,27 @@ export function Login() {
             />
           </div>
 
+          <div className="mb-2 p-3 bg-blue-500/10 border border-blue-500/50 rounded-lg">
+            <p className="text-blue-400 text-xs font-semibold mb-2">🎯 Demo Credentials</p>
+            <div className="space-y-1 text-xs text-slate-300">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Email:</span>
+                <span className="font-mono">demo@kubedeploy.io</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Password:</span>
+                <span className="font-mono">demo123</span>
+              </div>
+            </div>
+          </div>
+
           <Button
             type="button"
             onClick={fillDemoUser}
-            className="w-full bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 border border-slate-600/50 font-medium py-2"
+            className="w-full bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/50 font-medium py-2"
             variant="outline"
           >
-            Try Demo User
+            🚀 Fill Demo Credentials
           </Button>
 
           <Button
