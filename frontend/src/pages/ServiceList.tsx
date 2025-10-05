@@ -8,7 +8,7 @@ import { Trash2, RefreshCw, Globe, ExternalLink } from 'lucide-react';
 
 export default function ServiceList() {
   const queryClient = useQueryClient();
-  const [selectedNamespace, setSelectedNamespace] = useState<string>('');
+  const [selectedNamespace] = useState<string>('');
 
   const { data: services, isLoading, refetch } = useQuery({
     queryKey: ['services', selectedNamespace],
@@ -83,24 +83,24 @@ export default function ServiceList() {
       ) : (
         <div className="grid gap-4">
           {serviceList.map((service: any) => {
-            const serviceType = service.spec?.type || 'ClusterIP';
-            const clusterIP = service.spec?.clusterIP;
-            const ports = service.spec?.ports || [];
-            const externalIPs = service.status?.loadBalancer?.ingress || [];
+            const serviceType = service.type || 'ClusterIP';
+            const clusterIP = service.clusterIP;
+            const ports = service.ports || [];
+            const externalIPs = service.externalIPs || [];
 
             return (
-              <Card key={`${service.metadata.namespace}-${service.metadata.name}`} className="p-6 glass-effect border-slate-700/50 hover:border-purple-500/50 transition-all">
+              <Card key={`${service.namespace}-${service.name}`} className="p-6 glass-effect border-slate-700/50 hover:border-purple-500/50 transition-all">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold text-white">
-                        {service.metadata.name}
+                        {service.name}
                       </h3>
                       <Badge className={getServiceTypeColor(serviceType)}>
                         {serviceType}
                       </Badge>
                       <Badge variant="outline">
-                        {service.metadata.namespace}
+                        {service.namespace}
                       </Badge>
                     </div>
 
@@ -114,7 +114,7 @@ export default function ServiceList() {
                         <div>
                           <p className="text-sm text-slate-400">External IP</p>
                           <p className="text-white font-medium flex items-center gap-2">
-                            {externalIPs[0].ip || externalIPs[0].hostname}
+                            {externalIPs[0]}
                             <ExternalLink className="h-3 w-3" />
                           </p>
                         </div>
@@ -123,7 +123,7 @@ export default function ServiceList() {
                       <div>
                         <p className="text-sm text-slate-400">Age</p>
                         <p className="text-white font-medium">
-                          {new Date(service.metadata.creationTimestamp).toLocaleDateString()}
+                          {new Date(service.created_at).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
@@ -136,7 +136,7 @@ export default function ServiceList() {
                             <Badge key={i} variant="outline" className="text-xs">
                               {port.name && `${port.name}: `}
                               {port.port}:{port.targetPort}
-                              {port.nodePort && ` (NodePort: ${port.nodePort})`}
+                              {port.nodePort && port.nodePort > 0 && ` (NodePort: ${port.nodePort})`}
                               /{port.protocol}
                             </Badge>
                           ))}
@@ -144,11 +144,11 @@ export default function ServiceList() {
                       </div>
                     )}
 
-                    {service.spec?.selector && (
+                    {service.labels && Object.keys(service.labels).length > 0 && (
                       <div className="mt-4">
-                        <p className="text-sm text-slate-400 mb-2">Selectors</p>
+                        <p className="text-sm text-slate-400 mb-2">Labels</p>
                         <div className="flex flex-wrap gap-2">
-                          {Object.entries(service.spec.selector).map(([key, value]: [string, any]) => (
+                          {Object.entries(service.labels).map(([key, value]: [string, any]) => (
                             <Badge key={key} variant="outline" className="text-xs">
                               {key}={value}
                             </Badge>
@@ -160,7 +160,7 @@ export default function ServiceList() {
 
                   <div className="flex flex-col gap-2 ml-4">
                     <Button
-                      onClick={() => handleDelete(service.metadata.namespace, service.metadata.name)}
+                      onClick={() => handleDelete(service.namespace, service.name)}
                       variant="outline"
                       size="sm"
                       disabled={deleteMutation.isPending}

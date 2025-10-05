@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Server, Plus, List, Sparkles, Rocket, Layers, Globe } from 'lucide-react';
+import { Server, List, Sparkles, Rocket, Layers, Globe } from 'lucide-react';
 
 export function Layout() {
   const location = useLocation();

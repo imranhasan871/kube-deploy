@@ -8,7 +8,7 @@ import { Trash2, RefreshCw, Layers, TrendingUp, TrendingDown } from 'lucide-reac
 
 export default function DeploymentList() {
   const queryClient = useQueryClient();
-  const [selectedNamespace, setSelectedNamespace] = useState<string>('');
+  const [selectedNamespace] = useState<string>('');
 
   const { data: deployments, isLoading, refetch } = useQuery({
     queryKey: ['deployments', selectedNamespace],
@@ -88,23 +88,23 @@ export default function DeploymentList() {
       ) : (
         <div className="grid gap-4">
           {deploymentList.map((deployment: any) => {
-            const ready = deployment.status?.readyReplicas || 0;
-            const desired = deployment.spec?.replicas || 0;
+            const ready = deployment.readyReplicas || 0;
+            const desired = deployment.replicas || 0;
             const isHealthy = ready === desired && desired > 0;
 
             return (
-              <Card key={`${deployment.metadata.namespace}-${deployment.metadata.name}`} className="p-6 glass-effect border-slate-700/50 hover:border-purple-500/50 transition-all">
+              <Card key={`${deployment.namespace}-${deployment.name}`} className="p-6 glass-effect border-slate-700/50 hover:border-purple-500/50 transition-all">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-xl font-semibold text-white">
-                        {deployment.metadata.name}
+                        {deployment.name}
                       </h3>
                       <Badge variant={isHealthy ? 'default' : 'secondary'}>
                         {ready}/{desired} Ready
                       </Badge>
                       <Badge variant="outline">
-                        {deployment.metadata.namespace}
+                        {deployment.namespace}
                       </Badge>
                     </div>
 
@@ -112,7 +112,7 @@ export default function DeploymentList() {
                       <div>
                         <p className="text-sm text-slate-400">Image</p>
                         <p className="text-white font-medium">
-                          {deployment.spec?.template?.spec?.containers?.[0]?.image || 'N/A'}
+                          {deployment.image || 'N/A'}
                         </p>
                       </div>
                       <div>
@@ -121,23 +121,23 @@ export default function DeploymentList() {
                       </div>
                       <div>
                         <p className="text-sm text-slate-400">Available</p>
-                        <p className="text-white font-medium">{deployment.status?.availableReplicas || 0}</p>
+                        <p className="text-white font-medium">{deployment.availableReplicas || 0}</p>
                       </div>
                       <div>
                         <p className="text-sm text-slate-400">Age</p>
                         <p className="text-white font-medium">
-                          {new Date(deployment.metadata.creationTimestamp).toLocaleDateString()}
+                          {new Date(deployment.created_at).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
 
-                    {deployment.spec?.template?.spec?.containers?.[0]?.env && (
+                    {deployment.labels && Object.keys(deployment.labels).length > 0 && (
                       <div className="mt-4">
-                        <p className="text-sm text-slate-400 mb-2">Environment Variables</p>
+                        <p className="text-sm text-slate-400 mb-2">Labels</p>
                         <div className="flex flex-wrap gap-2">
-                          {deployment.spec.template.spec.containers[0].env.map((env: any, i: number) => (
-                            <Badge key={i} variant="outline" className="text-xs">
-                              {env.name}
+                          {Object.entries(deployment.labels).map(([key, value]: [string, any]) => (
+                            <Badge key={key} variant="outline" className="text-xs">
+                              {key}={value}
                             </Badge>
                           ))}
                         </div>
@@ -148,7 +148,7 @@ export default function DeploymentList() {
                   <div className="flex flex-col gap-2 ml-4">
                     <div className="flex gap-2">
                       <Button
-                        onClick={() => handleScale(deployment.metadata.namespace, deployment.metadata.name, desired, 'up')}
+                        onClick={() => handleScale(deployment.namespace, deployment.name, desired, 'up')}
                         variant="outline"
                         size="sm"
                         disabled={scaleMutation.isPending}
@@ -156,7 +156,7 @@ export default function DeploymentList() {
                         <TrendingUp className="h-4 w-4" />
                       </Button>
                       <Button
-                        onClick={() => handleScale(deployment.metadata.namespace, deployment.metadata.name, desired, 'down')}
+                        onClick={() => handleScale(deployment.namespace, deployment.name, desired, 'down')}
                         variant="outline"
                         size="sm"
                         disabled={scaleMutation.isPending || desired === 0}
@@ -165,7 +165,7 @@ export default function DeploymentList() {
                       </Button>
                     </div>
                     <Button
-                      onClick={() => handleDelete(deployment.metadata.namespace, deployment.metadata.name)}
+                      onClick={() => handleDelete(deployment.namespace, deployment.name)}
                       variant="outline"
                       size="sm"
                       disabled={deleteMutation.isPending}

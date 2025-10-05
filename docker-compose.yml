@@ -23,7 +23,7 @@ services:
             context: .
             dockerfile: docker/backend.Dockerfile
         ports:
-            - '8080:8080'
+            - '8081:8080'
         environment:
             - PORT=8080
             - DATABASE_URL=postgresql://kubedeploy:kubedeploy123@postgres:5432/kubedeploy?sslmode=disable

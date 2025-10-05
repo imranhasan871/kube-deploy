@@ -252,9 +252,9 @@ export default function AdvancedDeploy() {
               className="hidden"
               id="file-upload"
             />
-            <label htmlFor="file-upload">
-              <Button type="button" variant="outline" className="cursor-pointer" asChild>
-                <span>Choose File</span>
+            <label htmlFor="file-upload" className="inline-block">
+              <Button type="button" variant="outline" className="cursor-pointer">
+                Choose File
               </Button>
             </label>
           </div>
