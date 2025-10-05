@@ -1,0 +1,732 @@
+basePath: /api
+definitions:
+  models.APIResponse:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  models.ContainerPort:
+    properties:
+      containerPort:
+        type: integer
+      name:
+        type: string
+      protocol:
+        description: TCP, UDP
+        type: string
+    required:
+    - containerPort
+    type: object
+  models.DeploymentCreateRequest:
+    properties:
+      args:
+        items:
+          type: string
+        type: array
+      command:
+        items:
+          type: string
+        type: array
+      env:
+        items:
+          $ref: '#/definitions/models.EnvVar'
+        type: array
+      image:
+        type: string
+      name:
+        type: string
+      namespace:
+        type: string
+      ports:
+        items:
+          $ref: '#/definitions/models.ContainerPort'
+        type: array
+      replicas:
+        type: integer
+      resources:
+        $ref: '#/definitions/models.ResourceRequests'
+      volumes:
+        items:
+          $ref: '#/definitions/models.Volume'
+        type: array
+    required:
+    - image
+    - name
+    - namespace
+    - replicas
+    type: object
+  models.DeploymentResponse:
+    properties:
+      availableReplicas:
+        type: integer
+      created_at:
+        type: string
+      image:
+        type: string
+      labels:
+        additionalProperties:
+          type: string
+        type: object
+      name:
+        type: string
+      namespace:
+        type: string
+      readyReplicas:
+        type: integer
+      replicas:
+        type: integer
+    type: object
+  models.EnvVar:
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+    type: object
+  models.PodCreateRequest:
+    properties:
+      env:
+        items:
+          $ref: '#/definitions/models.EnvVar'
+        type: array
+      image:
+        type: string
+      name:
+        type: string
+      namespace:
+        type: string
+      ports:
+        items:
+          type: integer
+        type: array
+      replicas:
+        type: integer
+      resources:
+        $ref: '#/definitions/models.ResourceRequests'
+    required:
+    - image
+    - name
+    - namespace
+    type: object
+  models.PodResponse:
+    properties:
+      created_at:
+        type: string
+      image:
+        type: string
+      labels:
+        additionalProperties:
+          type: string
+        type: object
+      name:
+        type: string
+      namespace:
+        type: string
+      phase:
+        type: string
+      restarts:
+        type: integer
+      status:
+        type: string
+    type: object
+  models.ResourceRequests:
+    properties:
+      cpu:
+        type: string
+      memory:
+        type: string
+    type: object
+  models.ServiceCreateRequest:
+    properties:
+      name:
+        type: string
+      namespace:
+        type: string
+      ports:
+        items:
+          $ref: '#/definitions/models.ServicePort'
+        type: array
+      selector:
+        additionalProperties:
+          type: string
+        type: object
+      type:
+        description: ClusterIP, NodePort, LoadBalancer
+        type: string
+    required:
+    - name
+    - namespace
+    - ports
+    - selector
+    - type
+    type: object
+  models.ServicePort:
+    properties:
+      name:
+        type: string
+      nodePort:
+        description: Only for NodePort type
+        type: integer
+      port:
+        type: integer
+      protocol:
+        description: TCP, UDP
+        type: string
+      targetPort:
+        type: integer
+    required:
+    - port
+    - targetPort
+    type: object
+  models.ServiceResponse:
+    properties:
+      clusterIP:
+        type: string
+      created_at:
+        type: string
+      externalIP:
+        type: string
+      labels:
+        additionalProperties:
+          type: string
+        type: object
+      name:
+        type: string
+      namespace:
+        type: string
+      ports:
+        items:
+          $ref: '#/definitions/models.ServicePort'
+        type: array
+      type:
+        type: string
+    type: object
+  models.Volume:
+    properties:
+      mountPath:
+        type: string
+      name:
+        type: string
+      source:
+        description: Name of configMap, secret, or PVC
+        type: string
+      type:
+        description: emptyDir, configMap, secret, persistentVolumeClaim
+        type: string
+    required:
+    - mountPath
+    - name
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@kubedeploy.io
+    name: API Support
+  description: Kubernetes Pod-as-a-Service API for deploying and managing pods
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: KubeDeploy API
+  version: "1.0"
+paths:
+  /deployments:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all deployments in the cluster or a specific namespace
+      parameters:
+      - description: Namespace filter
+        in: query
+        name: namespace
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.DeploymentResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: List all deployments
+      tags:
+      - deployments
+    post:
+      consumes:
+      - application/json
+      description: Deploy a new application to the Kubernetes cluster
+      parameters:
+      - description: Deployment configuration
+        in: body
+        name: deployment
+        required: true
+        schema:
+          $ref: '#/definitions/models.DeploymentCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.DeploymentResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Create a new deployment
+      tags:
+      - deployments
+  /deployments/{namespace}/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a specific deployment from the cluster
+      parameters:
+      - description: Namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Deployment name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Delete a deployment
+      tags:
+      - deployments
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific deployment
+      parameters:
+      - description: Namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Deployment name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.DeploymentResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get deployment details
+      tags:
+      - deployments
+  /deployments/{namespace}/{name}/scale:
+    put:
+      consumes:
+      - application/json
+      description: Scale a deployment to a specific number of replicas
+      parameters:
+      - description: Namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Deployment name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Number of replicas
+        in: query
+        name: replicas
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Scale a deployment
+      tags:
+      - deployments
+  /namespaces:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all namespaces in the cluster
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  items:
+                    type: string
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: List all namespaces
+      tags:
+      - namespaces
+  /pods:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all pods in the cluster or a specific namespace
+      parameters:
+      - description: Namespace filter
+        in: query
+        name: namespace
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.PodResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: List all pods
+      tags:
+      - pods
+    post:
+      consumes:
+      - application/json
+      description: Deploy a new pod to the Kubernetes cluster
+      parameters:
+      - description: Pod configuration
+        in: body
+        name: pod
+        required: true
+        schema:
+          $ref: '#/definitions/models.PodCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.PodResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Create a new pod
+      tags:
+      - pods
+  /pods/{namespace}/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a specific pod from the cluster
+      parameters:
+      - description: Namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Pod name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Delete a pod
+      tags:
+      - pods
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific pod
+      parameters:
+      - description: Namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Pod name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.PodResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get pod details
+      tags:
+      - pods
+  /pods/{namespace}/{name}/logs:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve logs from a specific pod
+      parameters:
+      - description: Namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Pod name
+        in: path
+        name: name
+        required: true
+        type: string
+      - default: 100
+        description: Number of lines to tail
+        in: query
+        name: tail
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  properties:
+                    logs:
+                      type: string
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get pod logs
+      tags:
+      - pods
+  /services:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all services in the cluster or a specific namespace
+      parameters:
+      - description: Namespace filter
+        in: query
+        name: namespace
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ServiceResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: List all services
+      tags:
+      - services
+    post:
+      consumes:
+      - application/json
+      description: Create a Kubernetes service to expose an application
+      parameters:
+      - description: Service configuration
+        in: body
+        name: service
+        required: true
+        schema:
+          $ref: '#/definitions/models.ServiceCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ServiceResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Create a new service
+      tags:
+      - services
+  /services/{namespace}/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a specific service from the cluster
+      parameters:
+      - description: Namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Service name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Delete a service
+      tags:
+      - services
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific service
+      parameters:
+      - description: Namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Service name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ServiceResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get service details
+      tags:
+      - services
+schemes:
+- http
+- https
+swagger: "2.0"

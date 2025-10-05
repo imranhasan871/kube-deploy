@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-deploy-backend
+  namespace: kube-deploy
+  labels:
+    app: kube-deploy-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-deploy-backend
+  template:
+    metadata:
+      labels:
+        app: kube-deploy-backend
+    spec:
+      serviceAccountName: kube-deploy-sa
+      containers:
+        - name: backend
+          image: kube-deploy-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: PORT
+              value: "8080"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-deploy-backend
+  namespace: kube-deploy
+spec:
+  type: ClusterIP
+  selector:
+    app: kube-deploy-backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http

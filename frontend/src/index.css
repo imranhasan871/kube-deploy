@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@theme {
+  /* Modern Gradient Color Palette - Production Grade */
+  --color-primary-from: 139 92 246;      /* Purple */
+  --color-primary-to: 59 130 246;        /* Blue */
+  --color-accent-from: 236 72 153;       /* Pink */
+  --color-accent-to: 168 85 247;         /* Purple */
+  --color-success-from: 34 197 94;       /* Green */
+  --color-success-to: 16 185 129;        /* Teal */
+
+  /* Base Colors */
+  --color-background: 15 23 42;          /* Dark slate */
+  --color-surface: 30 41 59;             /* Lighter slate */
+  --color-card: 30 41 59;                /* Card background */
+  --color-border: 51 65 85;              /* Border color */
+
+  /* Text Colors */
+  --color-text-primary: 248 250 252;     /* Near white */
+  --color-text-secondary: 203 213 225;   /* Light gray */
+  --color-text-muted: 148 163 184;       /* Muted gray */
+
+  /* Status Colors */
+  --color-success: 34 197 94;
+  --color-warning: 251 146 60;
+  --color-error: 239 68 68;
+  --color-info: 59 130 246;
+}
+
+@layer base {
+  * {
+    @apply border-slate-700;
+  }
+
+  body {
+    @apply bg-slate-900 text-slate-50;
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-500;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: linear-gradient(135deg, rgb(var(--color-primary-from)) 0%, rgb(var(--color-primary-to)) 100%);
+  }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, rgb(var(--color-accent-from)) 0%, rgb(var(--color-accent-to)) 100%);
+  }
+
+  .gradient-success {
+    background: linear-gradient(135deg, rgb(var(--color-success-from)) 0%, rgb(var(--color-success-to)) 100%);
+  }
+
+  .glass-effect {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+  }
+}

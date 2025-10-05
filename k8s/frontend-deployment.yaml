@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-deploy-frontend
+  namespace: kube-deploy
+  labels:
+    app: kube-deploy-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-deploy-frontend
+  template:
+    metadata:
+      labels:
+        app: kube-deploy-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: kube-deploy-frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: http
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-deploy-frontend
+  namespace: kube-deploy
+spec:
+  type: NodePort
+  selector:
+    app: kube-deploy-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080
+      protocol: TCP
+      name: http
