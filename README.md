@@ -1,5 +1,9 @@
 # 🚀 KubeDeploy - Kubernetes Made Simple
 
+<img width="1920" height="3073" alt="homepage" src="https://github.com/user-attachments/assets/c445ecbf-3320-4484-8cc0-40f13674d374" />
+
+---
+
 Beautiful, production-ready platform for deploying and managing Kubernetes applications with an intuitive web interface.
 
 ![React](https://img.shields.io/badge/React-19-blue) ![Go](https://img.shields.io/badge/Go-1.21+-00ADD8) ![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-326CE5)
